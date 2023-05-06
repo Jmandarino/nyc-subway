@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    command: bash -c 'while !</dev/tcp/db/5432; do sleep 1; done; cd app/database && alembic upgrade head && cd ../.. && uvicorn app.main:app --host 0.0.0.0'
+    volumes:
+      - .:/app
+    ports:
+      - 8008:8000
+    environment:
+      - DATABASE_URL=postgresql://fastapi:password@db:5432/parker
+    depends_on:
+      - migration
+  db:
+    image: postgres:15-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    expose:
+      - 5432
+    environment:
+      - POSTGRES_USER=fastapi
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=parker
+  migration:
+    build: .
+    command: bash -c "cd /app/database && alembic upgrade head"
+    links:
+      - db
+    depends_on:
+      - db
+volumes:
+  postgres_data:

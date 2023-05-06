@@ -1,5 +1,9 @@
 # NYC Subway API
 
+## About
+
+Create a graph of subway lines then implement and use Dijkstra's Algorithm to always return the shortest path between 2 nodes
+
 ## Getting started
 This can be run with docker or without to run with docker please complete the following
 - `docker-compose up -d --build`
